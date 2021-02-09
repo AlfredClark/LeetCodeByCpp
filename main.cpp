@@ -4,34 +4,32 @@ using namespace std;
 
 class Solution {
 public:
-    int subarraysWithKDistinct(vector<int>& A, int K) {
-        int len=A.size(), size=0;
-        vector<int> counter(len + 1);
-        int dp=1;
-        int last=0, res=0;
-        for(int i:A) {
-            size+=counter[i]++>0?0:1;
-            if(size>K) {
-                counter[A[last++]]=0;
-                size--;
-                dp=1;
-            }
-            if(size==K) {
-                while(counter[A[last]]>1) {
-                    counter[A[last++]]--;
-                    dp++;
-                }
-                res+=dp;
-            }
+    bool checkInclusion(string s1, string s2) {
+        if (s1.length() > s2.length())
+            return false;
+        vector<short> count1(26, 0);
+        vector<short> count2(26, 0);
+        for (char s: s1)
+            count1[s - 'a']++;
+        int len = s1.length();
+        for (int i = 0; i < len; ++i)
+            count2[s2[i] - 'a']++;
+        if (count1 == count2)
+            return true;
+        for (int i = len; i < s2.length(); ++i) {
+            count2[s2[i] - 'a']++;
+            count2[s2[i - len] - 'a']--;
+            if (count1 == count2)
+                return true;
         }
-        return res;
+        return false;
     }
 };
 
 int main() {
     Solution solution;
-    int nums[] = {1, 2, 3, 2, 1};
-    vector<int> A(nums, nums + sizeof(nums) / sizeof (int));
-    cout << solution.subarraysWithKDistinct(A, 2);
+    string s1 = "ooabo";
+    string s2 = "eidbaooo";
+    cout << solution.checkInclusion(s1, s2);
     return 0;
 }
