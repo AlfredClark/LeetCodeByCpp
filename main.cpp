@@ -2,27 +2,16 @@
 
 using namespace std;
 
-class KthLargest {
+class Solution {
 public:
-    int k;
-    priority_queue<int, vector<int>, greater<>> pq;
-
-    KthLargest(int k, vector<int> &nums) {
-        this->k = k;
-        for (int num: nums)
-            pq.push(num);
-        while (pq.size() > k)
-            pq.pop();
-    }
-
-    int add(int val) {
-        if (pq.size() < k)
-            pq.push(val);
-        else if (val > pq.top()) {
-            pq.push(val);
-            pq.pop();
+    vector<int> getRow(int rowIndex) {
+        vector<int> res(rowIndex + 1, 1);
+        long next = 1;
+        for (int i = 0; i < rowIndex; ++i) {
+            res[i] = next;
+            next = (next * (rowIndex - i) / (i + 1));
         }
-        return pq.top();
+        return res;
     }
 };
 
@@ -33,13 +22,8 @@ public:
  */
 
 int main() {
-    int k = 3;
-    int num[] = {};
-    int test[] = {3, 5, 10, 9, 4};
-    vector<int> nums(num, num + sizeof(num) / sizeof(int));
-    auto *obj = new KthLargest(k, nums);
-    for (int i : test) {
-        cout << obj->add(i) << " ";
-    }
+    Solution solution;
+    for (int num: solution.getRow(30))
+        cout << num << "\t";
     return 0;
 }
