@@ -4,22 +4,53 @@ using namespace std;
 
 class Solution {
 public:
-    vector<int> findDisappearedNumbers(vector<int> &nums) {
-        vector<int> res;
-        for (int i = 0; i < nums.size(); ++i)
-            nums[abs(nums[i]) - 1] = -abs(nums[abs(nums[i]) - 1]);
-        for (int i = 0; i < nums.size(); ++i)
-            if (nums[i] > 0)
-                res.push_back(i + 1);
-        return res;
+    int getf(vector<int> &f, int x) {
+        if (f[x] == x) {
+            return x;
+        }
+        int newf = getf(f, f[x]);
+        f[x] = newf;
+        return newf;
+    }
+
+    void add(vector<int> &f, int x, int y) {
+        int fx = getf(f, x);
+        int fy = getf(f, y);
+        f[fx] = fy;
+    }
+
+    int minSwapsCouples(vector<int> &row) {
+        int n = row.size();
+        int tot = n / 2;
+        vector<int> f(tot, 0);
+        for (int i = 0; i < tot; i++) {
+            f[i] = i;
+        }
+
+        for (int i = 0; i < n; i += 2) {
+            int l = row[i] / 2;
+            int r = row[i + 1] / 2;
+            add(f, l, r);
+        }
+
+        unordered_map<int, int> m;
+        for (int i = 0; i < tot; i++) {
+            int fx = getf(f, i);
+            m[fx]++;
+        }
+
+        int ret = 0;
+        for (const auto&[f, sz]: m) {
+            ret += sz - 1;
+        }
+        return ret;
     }
 };
 
 int main() {
     Solution solution;
-    int num[] = {4, 3, 2, 7, 8, 2, 3, 1};
-    vector<int> nums(num, num + sizeof(num) / sizeof(int));
-    for (int i: solution.findDisappearedNumbers(nums))
-        cout << i << " ";
+    int num[] = {};
+    vector<int> row(num, num + sizeof(num) / sizeof(int));
+    cout << solution.minSwapsCouples(row);
     return 0;
 }
