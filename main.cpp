@@ -4,26 +4,22 @@ using namespace std;
 
 class Solution {
 public:
-    vector<int> getRow(int rowIndex) {
-        vector<int> res(rowIndex + 1, 1);
-        long next = 1;
-        for (int i = 0; i < rowIndex; ++i) {
-            res[i] = next;
-            next = (next * (rowIndex - i) / (i + 1));
-        }
+    vector<int> findDisappearedNumbers(vector<int> &nums) {
+        vector<int> res;
+        for (int i = 0; i < nums.size(); ++i)
+            nums[abs(nums[i]) - 1] = -abs(nums[abs(nums[i]) - 1]);
+        for (int i = 0; i < nums.size(); ++i)
+            if (nums[i] > 0)
+                res.push_back(i + 1);
         return res;
     }
 };
 
-/**
- * Your KthLargest object will be instantiated and called as such:
- * KthLargest* obj = new KthLargest(k, nums);
- * int param_1 = obj->add(val);
- */
-
 int main() {
     Solution solution;
-    for (int num: solution.getRow(30))
-        cout << num << "\t";
+    int num[] = {4, 3, 2, 7, 8, 2, 3, 1};
+    vector<int> nums(num, num + sizeof(num) / sizeof(int));
+    for (int i: solution.findDisappearedNumbers(nums))
+        cout << i << " ";
     return 0;
 }
