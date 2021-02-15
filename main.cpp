@@ -4,24 +4,19 @@ using namespace std;
 
 class Solution {
 public:
-    int findMaxConsecutiveOnes(vector<int> &nums) {
-        int max_count = 0, count = 0;
-        for (int num: nums)
-            if (num)
-                count++;
-            else {
-                max_count = max(max_count, count);
-                count = 0;
-            }
-        max_count = max(max_count, count);
-        return max_count;
+    int arrayPairSum(vector<int> &nums) {
+        int sum = 0;
+        sort(nums.begin(), nums.end());
+        for (int i = 0; i < nums.size(); i += 2)
+            sum += nums[i];
+        return sum;
     }
 };
 
 int main() {
     Solution solution;
-    int num[] = {1, 1, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1};
+    int num[] = {1, 3, 5, 8, 23, 63, 11, 9, 3, 2, 66, 23};
     vector<int> row(num, num + sizeof(num) / sizeof(int));
-    cout << solution.findMaxConsecutiveOnes(row);
+    cout << solution.arrayPairSum(row);
     return 0;
 }
