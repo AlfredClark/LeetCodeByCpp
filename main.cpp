@@ -4,31 +4,20 @@ using namespace std;
 
 class Solution {
 public:
-    queue<int> q;
-    int minKBitFlips(vector<int> &A, int K) {
-        int n = A.size();
-        int res = 0, p = 0;
-        for (int i = 0; i < n; ++i) {
-            if (i == q.front()){
-                q.pop();
-                p = !p;
-            }
-            if (A[i] == p){
-                if (i + K > n)
-                    return -1;
-                ++res;
-                q.push(i + K);
-                p = !p;
-            }
+    int longestOnes(vector<int> &A, int K) {
+        int left = 0, right = 0;
+        while (right < A.size()) {
+            K -= !A[right++];
+            K += K < 0 && !A[left++];
         }
-        return res;
+        return right - left;
     }
 };
 
 int main() {
     Solution solution;
-    int num[] = {0, 0, 0, 1, 0, 1, 1, 0};
+    int num[] = {0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1};
     vector<int> row(num, num + sizeof(num) / sizeof(int));
-    cout << solution.minKBitFlips(row, 3);
+    cout << solution.longestOnes(row, 3);
     return 0;
 }
