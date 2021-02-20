@@ -4,37 +4,27 @@ using namespace std;
 
 class Solution {
 public:
-    int findShortestSubArray(vector<int> &nums) {
-        int maxLen = INT_MIN, minLen = INT_MAX;
-        pair<int, pair<int, int>> record;
-        pair<int, int> se;
-        unordered_map<int, pair<int, pair<int, int> > > records;
-        for (int i = 0; i < nums.size(); ++i) {
-            if (!records.count(nums[i])) {
-                record.first = 1;
-                se.first = i;
-                se.second = i;
-                record.second = se;
-                records[nums[i]] = record;
-            } else {
-                records[nums[i]].first += 1;
-                records[nums[i]].second.second = i;
+    int findContentChildren(vector<int> &g, vector<int> &s) {
+        int count = 0, gi = 0, si = 0;
+        sort(g.begin(), g.end());
+        sort(s.begin(), s.end());
+        while (gi < g.size() && si < s.size()) {
+            if (s[si] >= g[gi]) {
+                gi++;
+                count++;
             }
+            si++;
         }
-        for (auto &item : records)
-            if (item.second.first > maxLen) {
-                maxLen = item.second.first;
-                minLen = item.second.second.second - item.second.second.first + 1;
-            } else if (item.second.first == maxLen)
-                minLen = min(minLen, item.second.second.second - item.second.second.first + 1);
-        return minLen;
+        return count;
     }
 };
 
 int main() {
     Solution solution;
-    int num[] = {1, 2, 2, 3, 1, 4, 2};
-    vector<int> row(num, num + sizeof(num) / sizeof(int));
-    cout << solution.findShortestSubArray(row);
+    int g_num[] = {2, 5, 15, 9, 10, 9};
+    int s_num[] = {8, 3, 6, 1, 20};
+    vector<int> g(g_num, g_num + sizeof(g_num) / sizeof(int));
+    vector<int> s(s_num, s_num + sizeof(s_num) / sizeof(int));
+    cout << solution.findContentChildren(g, s);
     return 0;
 }
