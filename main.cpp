@@ -4,34 +4,37 @@ using namespace std;
 
 class Solution {
 public:
-    int longestSubarray(vector<int> &nums, int limit) {
-        deque<int> maxQue, minQue;
-        int left = 0, right = 0, res = 0;
-        while (right < nums.size()) {
-            while (!maxQue.empty() && nums[right] > maxQue.back())
-                maxQue.pop_back();
-            while (!minQue.empty() && nums[right] < minQue.back())
-                minQue.pop_back();
-            maxQue.push_back(nums[right]);
-            minQue.push_back(nums[right]);
-            while (!maxQue.empty() && !minQue.empty() && maxQue.front() - minQue.front() > limit) {
-                if (maxQue.front() == nums[left])
-                    maxQue.pop_front();
-                if (minQue.front() == nums[left])
-                    minQue.pop_front();
-                left++;
+    static bool comp(const vector<int> &u, const vector<int> &v) {
+        return u[1] < v[1];
+    }
+
+    int findMinArrowShots(vector<vector<int>> &points) {
+        if (points.empty())
+            return 0;
+        sort(points.begin(), points.end(), comp);
+        int pos = points[0][1];
+        int ans = 1;
+        for (const vector<int> &balloon: points) {
+            if (balloon[0] > pos) {
+                pos = balloon[1];
+                ++ans;
             }
-            res = max(res, right - left + 1);
-            right++;
         }
-        return res;
+        return ans;
     }
 };
 
 int main() {
     Solution solution;
-    int num[] = {4, 2, 2, 2, 4, 4, 2, 2};
-    vector<int> nums(num, num + sizeof(num) / sizeof(int));
-    cout << solution.longestSubarray(nums, 0);
+    int point[4][2] = {{1, 2},
+                       {3, 4},
+                       {5, 6},
+                       {7, 8}};
+    vector<vector<int> > points;
+    points.emplace_back(point[0], point[0] + 2);
+    points.emplace_back(point[1], point[1] + 2);
+    points.emplace_back(point[2], point[2] + 2);
+    points.emplace_back(point[3], point[3] + 2);
+    cout << solution.findMinArrowShots(points);
     return 0;
 }
