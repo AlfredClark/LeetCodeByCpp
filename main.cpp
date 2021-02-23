@@ -4,37 +4,27 @@ using namespace std;
 
 class Solution {
 public:
-    static bool comp(const vector<int> &u, const vector<int> &v) {
-        return u[1] < v[1];
-    }
-
-    int findMinArrowShots(vector<vector<int>> &points) {
-        if (points.empty())
-            return 0;
-        sort(points.begin(), points.end(), comp);
-        int pos = points[0][1];
-        int ans = 1;
-        for (const vector<int> &balloon: points) {
-            if (balloon[0] > pos) {
-                pos = balloon[1];
-                ++ans;
-            }
+    int maxSatisfied(vector<int> &customers, vector<int> &grumpy, int X) {
+        int res0 = 0, res1 = 0, left = 0, right = 0, grumpy_c = 0, n = customers.size();
+        while (right < n) {
+            if (right >= X && grumpy[left++])
+                grumpy_c -= customers[left - 1];
+            if (!grumpy[right++])
+                res0 += customers[right - 1];
+            else
+                grumpy_c += customers[right - 1];
+            res1 = max(res1, grumpy_c);
         }
-        return ans;
+        return res0 + res1;
     }
 };
 
 int main() {
     Solution solution;
-    int point[4][2] = {{1, 2},
-                       {3, 4},
-                       {5, 6},
-                       {7, 8}};
-    vector<vector<int> > points;
-    points.emplace_back(point[0], point[0] + 2);
-    points.emplace_back(point[1], point[1] + 2);
-    points.emplace_back(point[2], point[2] + 2);
-    points.emplace_back(point[3], point[3] + 2);
-    cout << solution.findMinArrowShots(points);
+    int customer[] = {1, 0, 1, 2, 1, 1, 7, 5, 1, 2, 3, 2, 1};
+    int grump[] = {0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1};
+    vector<int> customers(customer, customer + sizeof(customer) / sizeof(int));
+    vector<int> grumpy(grump, grump + sizeof(grump) / sizeof(int));
+    cout << solution.maxSatisfied(customers, grumpy, 7);
     return 0;
 }
