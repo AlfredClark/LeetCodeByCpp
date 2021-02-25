@@ -4,13 +4,13 @@ using namespace std;
 
 class Solution {
 public:
-    vector<vector<int>> flipAndInvertImage(vector<vector<int>> &A) {
-        int left, right, n = A.size();
-        for (int i = 0; i < n; ++i)
-            for (left = 0, right = A[i].size() - 1; left <= right; ++left, --right)
-                if (A[i][left] == A[i][right])
-                    A[i][left] = A[i][right] ^= 1;
-        return A;
+    vector<vector<int>> transpose(vector<vector<int>> &matrix) {
+        int m = matrix.size(), n = matrix[0].size();
+        vector<vector<int>> result(n, vector<int>(m));
+        for (int i = 0; i < m; ++i)
+            for (int j = 0; j < n; ++j)
+                result[j][i] = matrix[i][j];
+        return result;
     }
 };
 
