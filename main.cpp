@@ -4,41 +4,41 @@ using namespace std;
 
 class Solution {
 public:
-    vector<int> findNumOfValidWords(vector<string> &words, vector<string> &puzzles) {
-        vector<int> result(puzzles.size());
-        result.clear();                             // 小优化，提高push_back效率
-        unordered_map<int, int> wordCount;
-        for (const string &word: words) {
-            int value = 0;                          // 二进制状态值
-            for (const char chr: word)
-                value |= (1 << (chr - 'a'));        // puzzle二进制状态压缩
-            if (__builtin_popcount(value) <= 7)     // 如果对应二进制表示中1的数量大于7，没有必要加入哈希表中
-                ++wordCount[value];                 // 哈希表计数
-        }
-        for (const string &puzzle: puzzles) {
-            int total = 0, value = 0;
-            for (int i = 1; i < 7; ++i)
-                value |= (1 << (puzzle[i] - 'a'));  // word跳过首位的二进制状态压缩
-            int subset = value, toLeft = puzzle[0] - 'a';
-            do {
-                int s = subset | (1 << toLeft);     // 添加首位
-                if (wordCount.count(s))
-                    total += wordCount[s];          // 计数
-                subset = (subset - 1) & value;      // puzzle对应二进制压缩态全组合遍历
-            } while (subset != value);
-            result.push_back(total);                // 添加对应计数结果
+    int dfs(const string &s, int left, int right, int k, vector<int> &count) {
+        count.clear();
+        for (int i = left; i <= right; ++i)
+            count[s[i] - 'a']++;
+        char split = 0;
+        for (int i = 0; i < 26; ++i)
+            if (count[i] > 0 && count[i] < k) {
+                split = 'a' + i;
+                break;
+            }
+        if (split == 0)
+            return right - left + 1;
+        int result = 0, i = left;
+        while (i <= right) {
+            while (i <= right && s[i] == split)
+                i++;
+            if (i > right)
+                break;
+            int start = i;
+            while (i <= right && s[i] != split)
+                i++;
+            result = max(result, dfs(s, start, i - 1, k, count));
         }
         return result;
+    }
+
+    int longestSubstring(string s, int k) {
+        int n = s.length();
+        vector<int> count(26, 0);
+        return dfs(s, 0, n - 1, k, count);
     }
 };
 
 int main() {
     Solution solution;
-    string word[] = {"aaaa", "asas", "able", "ability", "actt", "actor", "access"};
-    string puzzle[] = {"aboveyz", "abrodyz", "abslute", "absoryz", "actresz", "gaswxyz"};
-    vector<string> words(word, word + 7);
-    vector<string> puzzles(puzzle, puzzle + 6);
-    for (int res: solution.findNumOfValidWords(words, puzzles))
-        cout << res << "\t";
+    cout << solution.longestSubstring("aacabcbacbdcsasdaxczxcac", 3);
     return 0;
 }
