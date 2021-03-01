@@ -2,43 +2,27 @@
 
 using namespace std;
 
-class Solution {
+class NumArray {
 public:
-    int dfs(const string &s, int left, int right, int k, vector<int> &count) {
-        count.clear();
-        for (int i = left; i <= right; ++i)
-            count[s[i] - 'a']++;
-        char split = 0;
-        for (int i = 0; i < 26; ++i)
-            if (count[i] > 0 && count[i] < k) {
-                split = 'a' + i;
-                break;
-            }
-        if (split == 0)
-            return right - left + 1;
-        int result = 0, i = left;
-        while (i <= right) {
-            while (i <= right && s[i] == split)
-                i++;
-            if (i > right)
-                break;
-            int start = i;
-            while (i <= right && s[i] != split)
-                i++;
-            result = max(result, dfs(s, start, i - 1, k, count));
-        }
-        return result;
+    int *sums;
+
+    NumArray(vector<int> &nums) {
+        int n = nums.size();
+        sums = new int[n + 1];
+        for (int i = 0; i < n; ++i)
+            sums[i + 1] = sums[i] + nums[i];
     }
 
-    int longestSubstring(string s, int k) {
-        int n = s.length();
-        vector<int> count(26, 0);
-        return dfs(s, 0, n - 1, k, count);
+    int sumRange(int i, int j) {
+        return sums[j + 1] - sums[i];
     }
 };
 
 int main() {
-    Solution solution;
-    cout << solution.longestSubstring("aacabcbacbdcsasdaxczxcac", 3);
+    int num[] = {-2, 0, 3, -5, 2, -1};
+    vector<int> nums(num, num + sizeof(num) / sizeof(int));
+    NumArray *obj = new NumArray(nums);
+    int param_1 = obj->sumRange(2, 5);
+    cout << param_1 << endl;
     return 0;
 }
