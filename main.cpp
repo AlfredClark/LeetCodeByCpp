@@ -2,76 +2,62 @@
 
 using namespace std;
 
-//class Solution {
-//public:
-//    int maxIncreaseSubsequenceLength(vector<int> &nums) {
-//        int n = nums.size();
-//        if (n == 0)
-//            return 0;
-//        // 最大的长度记录
-//        int len = 1;
-//        // 直接预留了一，所以是n+1 填充时候也从1开始, 好处就是最后len长度就是结果，无需额外处理
-//        int *d = new int[n + 1];
-//        d[len] = nums[0];
-//        for (int i = 1; i < n; ++i) {
-//            if (nums[i] > d[len]) {
-//                d[++len] = nums[i];
-//            } else {
-//                int l = 1;
-//                int r = len;
-//                int pos = 0;
-//                while (l <= r) {
-//                    int mid = (l + r) >> 1;
-//                    if (d[mid] < nums[i]) {
-//                        pos = mid;
-//                        l = mid + 1;
-//                    } else {
-//                        r = mid - 1;
-//                    }
-//                }
-//                d[pos + 1] = nums[i];
-//            }
-//        }
-//        return len;
-//    }
-//};
-
 class Solution {
+private:
+    vector<vector<int>> f;
+    vector<vector<string>> ret;
+    vector<string> ans;
+    int n;
+
 public:
-    vector<int> nextGreaterElements(vector<int> &nums) {
-        int n = nums.size(), i = 0, nums_max = INT_MIN;
-        vector<int> result(n, -1);
-        stack<int> lower;
-        while (i < n) {
-            if (nums[i] > nums_max)
-                nums_max = nums[i];
-            if (!lower.empty() && nums[i] > nums[lower.top()])
-                while (!lower.empty() && nums[i] > nums[lower.top()]) {
-                    result[lower.top()] = nums[i];
-                    lower.pop();
-                }
-            lower.push(i++);
+    void dfs(const string &s, int i) {
+        if (i == n) {
+            ret.push_back(ans);
+            return;
         }
-        i = 0;
-        while (i < n) {
-            while (!lower.empty() && nums[i] > nums[lower.top()]) {
-                result[lower.top()] = nums[i];
-                lower.pop();
+        for (int j = i; j < n; ++j) {
+            if (f[i][j]) {
+                ans.push_back(s.substr(i, j - i + 1));
+                dfs(s, j + 1);
+                ans.pop_back();
             }
-            if (nums[lower.top()] == nums_max)
-                break;
-            i++;
         }
-        return result;
+    }
+
+    vector<vector<string>> partition(string s) {
+        n = s.size();
+        f.assign(n, vector<int>(n, true));
+
+        for (int i = n - 1; i >= 0; --i)
+            for (int j = i + 1; j < n; ++j)
+                f[i][j] = (s[i] == s[j]) && f[i + 1][j - 1];
+
+        dfs(s, 0);
+        return ret;
     }
 };
 
-
 int main() {
     Solution solution;
-    int num[] = {2, 1, 5, 3, 6, 4, 8, 9, 7};
-    vector<int> nums(num, num + sizeof(num) / sizeof(int));
-    for (int res: solution.nextGreaterElements(nums))
-        cout << res << "\t";
+    string s = "aabaaccbda";
+    for (const auto &res: solution.partition(s)) {
+        for (const auto &r: res)
+            cout << r << "\t";
+        cout << endl;
+    }
     return 0;
 }
+// [
+// ["a","a","b","a","a","c","c","b","d","a"],
+// ["a","a","b","a","a","cc","b","d","a"],
+// ["a","a","b","aa","c","c","b","d","a"],
+// ["a","a","b","aa","cc","b","d","a"],
+// ["a","aba","a","c","c","b","d","a"],
+// ["a","aba","a","cc","b","d","a"],
+// ["aa","b","a","a","c","c","b","d","a"],
+// ["aa","b","a","a","cc","b","d","a"],
+// ["aa","b","aa","c","c","b","d","a"],
+// ["aa","b","aa","cc","b","d","a"],
+// ["aabaa","c","c","b","d","a"],
+// ["aabaa","cc","b","d","a"]
+// ]
