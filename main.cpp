@@ -4,42 +4,50 @@ using namespace std;
 
 class Solution {
 private:
-    vector<vector<int>> f;
-    vector<vector<string>> ret;
-    vector<string> ans;
-    int n;
+    stack<unsigned short> recursive_stack;
+    vector<vector<string>> results;
+    vector<string> result;
+    vector<unsigned short> status;
+
+    static bool isPalindrome(const string &s, int start, int end) {
+        while (start < end)
+            if (s[start++] != s[end--])
+                return false;
+        return true;
+    }
 
 public:
-    void dfs(const string &s, int i) {
-        if (i == n) {
-            ret.push_back(ans);
-            return;
-        }
-        for (int j = i; j < n; ++j) {
-            if (f[i][j]) {
-                ans.push_back(s.substr(i, j - i + 1));
-                dfs(s, j + 1);
-                ans.pop_back();
+    void dfs(const string &s, int start) {
+        recursive_stack.push(start);
+        while (!recursive_stack.empty()) {
+            int begin = recursive_stack.top();
+            int end = __builtin_ffs(status[begin]);
+            result.push_back(s.substr(begin, end - begin));
+            if (end >= s.length()){
+                results.emplace_back(result.begin(), result.end());
+                result.pop_back();
+                status[begin] &= ~(1 << (end - 1));
+            } else {
+                recursive_stack.push(end);
             }
         }
     }
 
-    vector<vector<string>> partition(string s) {
-        n = s.size();
-        f.assign(n, vector<int>(n, true));
-
-        for (int i = n - 1; i >= 0; --i)
-            for (int j = i + 1; j < n; ++j)
-                f[i][j] = (s[i] == s[j]) && f[i + 1][j - 1];
-
+    vector<vector<string>> partition(const string &s) {
+        int n = s.size();
+        status.resize(n);
+        for (int i = 0; i < n; ++i)
+            for (int j = i; j < n; ++j)
+                if (isPalindrome(s, i, j))
+                    status[i] |= (1 << j);
         dfs(s, 0);
-        return ret;
+        return results;
     }
 };
 
 int main() {
     Solution solution;
-    string s = "aabaaccbda";
+    string s = "aabaaccbdbc";
     for (const auto &res: solution.partition(s)) {
         for (const auto &r: res)
             cout << r << "\t";
@@ -47,17 +55,4 @@ int main() {
     }
     return 0;
 }
-// [
-// ["a","a","b","a","a","c","c","b","d","a"],
-// ["a","a","b","a","a","cc","b","d","a"],
-// ["a","a","b","aa","c","c","b","d","a"],
-// ["a","a","b","aa","cc","b","d","a"],
-// ["a","aba","a","c","c","b","d","a"],
-// ["a","aba","a","cc","b","d","a"],
-// ["aa","b","a","a","c","c","b","d","a"],
-// ["aa","b","a","a","cc","b","d","a"],
-// ["aa","b","aa","c","c","b","d","a"],
-// ["aa","b","aa","cc","b","d","a"],
-// ["aabaa","c","c","b","d","a"],
-// ["aabaa","cc","b","d","a"]
-// ]
+
