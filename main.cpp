@@ -4,34 +4,33 @@ using namespace std;
 
 class Solution {
 public:
-    vector<vector<int>> generateMatrix(int n) {
-        vector<vector<int>> ret(n, vector<int>(n));
-        int floor = (n + 1) / 2, num = 1;
-        for (int f = 0; f < floor; ++f) {
-            int limit = n - f - 1;
-            for (int i = f; i < limit; ++i)
-                ret[f][i] = num++;
-            for (int i = f; i < limit; ++i)
-                ret[i][limit] = num++;
-            for (int i = limit; i > f; --i)
-                ret[limit][i] = num++;
-            for (int i = limit; i > f; --i)
-                ret[i][f] = num++;
+    int numDistinct(string s, string t) {
+        int m = s.size(), n = t.size();
+        if (m < n)
+            return 0;
+        vector<vector<long>> dp(m + 1, vector<long>(n + 1));
+        for (int i = 0; i < m + 1; ++i)
+            dp[i][n] = 1;
+        for (int i = m - 1; i >= 0; --i) {
+            char a = s.at(i);
+            for (int j = n - 1; j >= 0; --j) {
+                char b = t.at(j);
+                if (a == b) {
+                    dp[i][j] = dp[i + 1][j] + dp[i + 1][j + 1];
+                } else {
+                    dp[i][j] = dp[i + 1][j];
+                }
+            }
         }
-        if (num == n * n)
-            ret[floor - 1][floor - 1] = num;
-        return ret;
+        return dp[0][0];
     }
 };
 
 int main() {
     Solution solution;
-    int n = 7;
-    for (const auto &line: solution.generateMatrix(n)) {
-        for (int num: line)
-            cout << num << "\t";
-        cout << endl;
-    }
+    string s = "rabbbit";
+    string t = "rabbit";
+    cout << solution.numDistinct(s, t) << endl;
     return 0;
 }
 
