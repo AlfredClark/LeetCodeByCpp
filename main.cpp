@@ -2,35 +2,41 @@
 
 using namespace std;
 
+struct ListNode {
+    int val;
+    ListNode *next;
+
+    ListNode() : val(0), next(nullptr) {}
+
+    ListNode(int x) : val(x), next(nullptr) {}
+
+    ListNode(int x, ListNode *next) : val(x), next(next) {}
+};
+
 class Solution {
 public:
-    int numDistinct(string s, string t) {
-        int m = s.size(), n = t.size();
-        if (m < n)
-            return 0;
-        vector<vector<long>> dp(m + 1, vector<long>(n + 1));
-        for (int i = 0; i < m + 1; ++i)
-            dp[i][n] = 1;
-        for (int i = m - 1; i >= 0; --i) {
-            char a = s.at(i);
-            for (int j = n - 1; j >= 0; --j) {
-                char b = t.at(j);
-                if (a == b) {
-                    dp[i][j] = dp[i + 1][j] + dp[i + 1][j + 1];
-                } else {
-                    dp[i][j] = dp[i + 1][j];
-                }
-            }
+    ListNode *reverseBetween(ListNode *head, int left, int right) {
+        ListNode *dummyNode = new ListNode(-1);
+        dummyNode->next = head;
+        ListNode *pre = dummyNode;
+        for (int i = 0; i < left - 1; i++) {
+            pre = pre->next;
         }
-        return dp[0][0];
+        ListNode *cur = pre->next;
+        ListNode *next;
+        for (int i = 0; i < right - left; i++) {
+            next = cur->next;
+            cur->next = next->next;
+            next->next = pre->next;
+            pre->next = next;
+        }
+        return dummyNode->next;
     }
 };
 
 int main() {
     Solution solution;
-    string s = "rabbbit";
-    string t = "rabbit";
-    cout << solution.numDistinct(s, t) << endl;
+
     return 0;
 }
 
