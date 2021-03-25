@@ -2,29 +2,40 @@
 
 using namespace std;
 
+struct ListNode {
+    int val;
+    ListNode *next;
+
+    ListNode() : val(0), next(nullptr) {}
+
+    ListNode(int x) : val(x), next(nullptr) {}
+
+    ListNode(int x, ListNode *next) : val(x), next(next) {}
+};
+
 class Solution {
 public:
-    bool find132pattern(vector<int> &nums) {
-        stack<int> stk;
-        int med = INT_MIN;
-        for (int i = nums.size() - 1; i >= 0; --i) {
-            if (nums[i] < med)
-                return true;
-            while (!stk.empty() && stk.top() < nums[i]) {
-                med = max(stk.top(), med);
-                stk.pop();
+    ListNode *deleteDuplicates(ListNode *head) {
+        if (head == nullptr)
+            return head;
+        auto *h = new ListNode(-1, head);
+        ListNode *p = h;
+        while (p->next && p->next->next) {
+            if (p->next->val == p->next->next->val) {
+                int val = p->next->val;
+                while (p->next && p->next->val == val)
+                    p->next = p->next->next;
+            } else {
+                p = p->next;
             }
-            stk.push(nums[i]);
         }
-        return false;
+        return h->next;
     }
 };
 
 int main() {
     Solution solution;
-    int num[] = {-1, 3, 2, 0};
-    vector<int> nums(num, num + sizeof(num) / sizeof(int));
-    cout << solution.find132pattern(nums) << endl;
+
     return 0;
 }
 
