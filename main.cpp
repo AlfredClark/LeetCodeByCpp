@@ -16,20 +16,21 @@ struct ListNode {
 class Solution {
 public:
     ListNode *deleteDuplicates(ListNode *head) {
-        if (head == nullptr)
+        if (!head)
             return head;
-        auto *h = new ListNode(-1, head);
-        ListNode *p = h;
-        while (p->next && p->next->next) {
-            if (p->next->val == p->next->next->val) {
-                int val = p->next->val;
-                while (p->next && p->next->val == val)
-                    p->next = p->next->next;
+        int val = head->val;
+        ListNode *p = head;
+        while (p->next) {
+            if (p->next->val == val) {
+                ListNode *d = p->next;
+                p->next = p->next->next;
+                delete (d);
             } else {
+                val = p->next->val;
                 p = p->next;
             }
         }
-        return h->next;
+        return head;
     }
 };
 
