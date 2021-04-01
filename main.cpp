@@ -4,39 +4,35 @@ using namespace std;
 
 class Solution {
 public:
-    vector<int> t;
-    vector<vector<int>> ans;
-
-    void dfs(bool choosePre, int cur, vector<int> &nums) {
-        if (cur == nums.size()) {
-            ans.push_back(t);
-            return;
+    static int clumsy(int N) {
+        if (N == 0)
+            return 0;
+        int ans = 0, tmp = N--;
+        for (int i = 0; N; ++i) {
+            switch (i % 4) {
+                case 0:
+                    tmp *= N--;
+                    break;
+                case 1:
+                    tmp /= N--;
+                    ans += tmp;
+                    tmp = 0;
+                    break;
+                case 2:
+                    ans += N--;
+                    break;
+                default:
+                    tmp = -N--;
+                    break;
+            }
         }
-        dfs(false, cur + 1, nums);
-        if (!choosePre && cur > 0 && nums[cur - 1] == nums[cur]) {
-            return;
-        }
-        t.push_back(nums[cur]);
-        dfs(true, cur + 1, nums);
-        t.pop_back();
-    }
-
-    vector<vector<int>> subsetsWithDup(vector<int> &nums) {
-        sort(nums.begin(), nums.end());
-        dfs(false, 0, nums);
-        return ans;
+        return ans + tmp;
     }
 };
 
 int main() {
     Solution solution;
-    int num[] = {1, 2, 5, 3, 4, 2, 5};
-    vector<int> nums(num, num + sizeof(num) / sizeof(int));
-    for (const auto &res:solution.subsetsWithDup(nums)) {
-        for (auto re:res)
-            cout << re << " ";
-        cout << endl;
-    }
+    cout << solution.clumsy(10) << endl;
     return 0;
 }
 
